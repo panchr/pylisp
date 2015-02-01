@@ -4,12 +4,13 @@
 
 import re
 
-lispExtract = re.compile("\(? ?((?:\w)+|\([\w (]+\))").findall
+lispExtract = re.compile("\(? ?(-?(?:\w)+|\([-\w (]+\))").findall
 
 class Expression(object):
 	'''A LISP Expression'''
 	def __init__(self, expression):
 		self.expression = expression
+		self.formatted = None
 		if isinstance(expression, list):
 			self.elements = expression
 		else:
@@ -17,8 +18,29 @@ class Expression(object):
 
 	def evaluate(self, **values):
 		'''Evaluates the LISP expression with the given values'''
-		# return Interpreter.evaluate(copy.deepcopy(self.elements), **values)
 		return Interpreter.interpret(self.expression, **values)
+
+	def format(self, elements,  top = True):
+		'''Formats the expression as a string'''
+		if isinstance(elements, list):
+			output = "'(" if top else "("
+			max_index = len(elements) -1
+			for index, elem in enumerate(elements):
+				elemStr = self.format(elem, False) if isinstance(elem, list) else str(elem)
+				output += "{leading}{item}{trailing}".format(item =  elemStr, leading = " " if index > 0 else "", trailing = "" if index == max_index else " ")
+			return (output + ")").replace("  ", " ")
+		else:
+			return elements
+
+	def __str__(self):
+		'''Converts the expression to a string'''
+		if not self.formatted:
+			self.formatted = self.format(self.elements)
+		return self.formatted
+
+	def __repl__(self):
+		'''Same as str(self)'''
+		return str(self)
 
 class Interpreter(object):
 	'''Contains basic LISP interpretation methods'''
