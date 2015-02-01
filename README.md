@@ -50,3 +50,14 @@ There are a few standard LISP operators as well as a few custom operators that c
 |NEG|a|a < 0
 |MAX|a, b, c, ...|Maximum value of {a, b, c, ...}
 |MIN|a, b, c, ...|Minimum value of {a, b, c, ...}
+
+New operators can be registered using the `Interpreter.register` method:
+```python
+def neq(a, b):
+  return a != b
+  
+Interpreter.register("NEQ", neq)
+Interpreter.register("GE", lambda a, b: a > b)
+```
+
+As shown, the `.register` method takes an operation name (a string) and an operator function. The function should accept numeric values and return a numeric (or Boolean) value.
