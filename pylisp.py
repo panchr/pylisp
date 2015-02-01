@@ -22,6 +22,9 @@ class Expression(object):
 
 class Interpreter(object):
 	'''Contains basic LISP interpretation methods'''
+	spaced = " {0} ".format
+	bracketed = " {0})".format
+
 	@classmethod
 	def interpret(cls, expression, **values):
 		'''Interprets a given LISP expression and returns a Lisp object'''
@@ -30,11 +33,9 @@ class Interpreter(object):
 	@classmethod
 	def compile(cls, expression, **values):
 		'''Compiles an expression with given values'''
-		spaced = " {0} ".format
-		bracketed = " {0})".format
 		compiledExpr = expression
 		for var, value in values.items():
-			compiledExpr = compiledExpr.replace(spaced(var), spaced(value)).replace(bracketed(var), bracketed(value))
+			compiledExpr = compiledExpr.replace(cls.spaced(var), cls.spaced(value)).replace(cls.bracketed(var), cls.bracketed(value))
 		return compiledExpr
 
 	@classmethod
@@ -64,7 +65,7 @@ class Interpreter(object):
 	@classmethod
 	def isOperator(cls, op):
 		'''Returns whether or not op is a valid operator'''
-		return op in VALID_OPERATIONS
+		return op in OPERATIONS
 
 	@classmethod
 	def register(cls, op, function):
@@ -87,5 +88,3 @@ OPERATIONS = {
 	"MAX": 		lambda *args: max(args),
 	"MIN": 		lambda *args: min(args),
 	}
-
-VALID_OPERATIONS = OPERATIONS.keys()
